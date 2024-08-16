@@ -26,8 +26,8 @@ class ShowsProvider with ChangeNotifier {
           .get(Uri.parse('https://api.tvmaze.com/search/shows?q=$query'));
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        _shows = data['shows'];
+        final data = json.decode(response.body.toString());
+        _shows = data;
       } else {
         _shows = [];
         _errorMessage = 'Error fetching shows: ${response.reasonPhrase}';

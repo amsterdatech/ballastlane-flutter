@@ -1,4 +1,5 @@
 import 'package:ballastlane_flutter/providers/shows_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +33,13 @@ class DetailScreen extends StatelessWidget {
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  Image.network(show['image']['original']),
+                  CachedNetworkImage(
+                    imageUrl: show['image']['original'],
+                    placeholder: (context, url) =>
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
                   const SizedBox(height: 10),
                   Text(removeAllHtmlTags(show['summary'])),
                 ],

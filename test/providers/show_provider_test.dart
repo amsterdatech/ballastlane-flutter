@@ -20,17 +20,15 @@ void main() {
   });
 
   test('should set shows correctly from the API response', () async {
-    final mockResponse = jsonEncode({
-      "shows": [
-        {
-          "show": {
-            "id": 1,
-            "name": "Pokémon",
-            "image": {"medium": "https://image.url"}
-          }
+    final mockResponse = jsonEncode([
+      {
+        "show": {
+          "id": 1,
+          "name": "Pokémon",
+          "image": {"medium": "https://image.url"}
         }
-      ]
-    });
+      }
+    ]);
 
     // Use Mockito to return a successful response when it calls the
     // provided http.Client.
@@ -48,7 +46,6 @@ void main() {
     expect(showsProvider.shows.length, 1);
     expect(showsProvider.shows[0]['show']['name'], 'Pokémon');
   });
-
 
   test('should handle API errors correctly', () async {
     when(client.get(Uri.parse('https://api.tvmaze.com/search/shows?q=pokemon')))
