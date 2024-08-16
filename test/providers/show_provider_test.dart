@@ -20,7 +20,6 @@ void main() {
   });
 
   test('should set shows correctly from the API response', () async {
-    final client = MockClient();
     final mockResponse = jsonEncode({
       "shows": [
         {
@@ -48,5 +47,37 @@ void main() {
     // Check that shows are set correctly
     expect(showsProvider.shows.length, 1);
     expect(showsProvider.shows[0]['show']['name'], 'Pokémon');
+  });
+
+
+  test('should handle API errors correctly', () async {
+    when(client.get(Uri.parse('https://api.tvmaze.com/search/shows?q=pokemon')))
+        .thenAnswer((_) async => http.Response('Not Found', 404));
+
+    await showsProvider.fetchShows('pokemon');
+
+    // Check that shows remain empty on error
+    expect(showsProvider.shows, isEmpty);
+  });
+
+  test('should fetch show details correctly', () async {
+    final mockResponse = jsonEncode({
+      "id": 1,
+      "name": "Pokémon",
+      "image": {"original": "https://image.url"},
+      "summary": "A summary of Pokémon."
+    });
+
+    when(client.get(Uri.parse('https://api.tvmaze.com/shows/1')))
+        .thenAnswer((_) async => http.Response(mockResponse, 200));
+
+    final details = await showsProvider.fetchShowDetails(1);
+
+    // Verify the correct API call was made
+    verify(client.get(Uri.parse('https://api.tvmaze.com/shows/1'))).called(1);
+
+    // Check that details are set correctly
+    expect(details['name'], 'Pokémon');
+    expect(details['summary'], 'A summary of Pokémon.');
   });
 }
