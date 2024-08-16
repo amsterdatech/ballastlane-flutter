@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+import 'details_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final TextEditingController _searchController = TextEditingController();
@@ -11,6 +12,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<ShowsProvider>(context, listen: false).fetchShows("Pokemon");
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('TV Shows'),
@@ -58,18 +61,21 @@ class HomeScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final show = tvProvider.shows[index];
                     return Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24)),
                       child: ListTile(
                         leading: show['show']['image'] != null
                             ? Image.network(show['show']['image']['medium'])
                             : null,
                         title: Text(show['show']['name']),
                         onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => DetailScreen(id: show['show']['id']),
-                          //   ),
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailScreen(id: show['show']['id']),
+                            ),
+                          );
                         },
                       ),
                     );

@@ -5,17 +5,18 @@ import 'package:provider/provider.dart';
 class DetailScreen extends StatelessWidget {
   final int id;
 
-  DetailScreen({required this.id});
+  const DetailScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Show Details')),
+      appBar: AppBar(title: const Text('Show Details')),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: Provider.of<ShowsProvider>(context, listen: false).fetchShowDetails(id),
+        future: Provider.of<ShowsProvider>(context, listen: false)
+            .fetchShowDetails(id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -23,19 +24,29 @@ class DetailScreen extends StatelessWidget {
           final show = snapshot.data!;
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(show['name'], style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                Image.network(show['image']['original']),
-                SizedBox(height: 10),
-                Text(show['summary']),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(show['name'],
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  Image.network(show['image']['original']),
+                  const SizedBox(height: 10),
+                  Text(removeAllHtmlTags(show['summary'])),
+                ],
+              ),
             ),
           );
         },
       ),
     );
   }
+}
+
+String removeAllHtmlTags(String htmlText) {
+  RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+
+  return htmlText.replaceAll(exp, '');
 }

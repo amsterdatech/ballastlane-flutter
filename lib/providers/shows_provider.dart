@@ -29,4 +29,6 @@ class ShowsProvider with ChangeNotifier {
         await client.get(Uri.parse('https://api.tvmaze.com/shows/$id'));
     return json.decode(response.body);
   }
+
+
 }
